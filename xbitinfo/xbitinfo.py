@@ -208,6 +208,7 @@ def get_bitinformation(
     if overwrite is False and label is not None:
         try:
             info_per_bit = load_bitinformation(label)
+            info_per_bit = dict_to_dataset(info_per_bit)
         except FileNotFoundError:
             logging.info(
                 f"No bitinformation could be found for {label}. Please set `overwrite=True` for recalculation..."
@@ -240,8 +241,7 @@ def get_bitinformation(
         if label is not None:
             out_fn = label + ".json"
             if not os.path.exists(out_fn) or overwrite:
-                save_bitinformation(info_per_bit, out_fn)
-        info_per_bit = dict_to_dataset(info_per_bit)
+                save_bitinformation(info_per_bit.to_dict(), out_fn)
         for var in info_per_bit.data_vars:  # keep attrs from input with source_ prefix
             for a in ds[var].attrs.keys():
                 info_per_bit[var].attrs["source_" + a] = ds[var].attrs[a]
@@ -367,6 +367,7 @@ def _get_bitinformation_along_axis(ds, implementation, axis, dim, **kwargs):
             raise ValueError(
                 f"Implementation of bitinformation algorithm {implementation} is unknown. Please choose a different one."
             )
+        info_per_bit = dict_to_dataset(info_per_bit)
     return info_per_bit
 
 
