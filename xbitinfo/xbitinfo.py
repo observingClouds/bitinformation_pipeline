@@ -117,8 +117,10 @@ def _check_bitinfo_kwargs(implementation=None, axis=None, dim=None, kwargs=None)
         if not isinstance(axis, int):
             raise ValueError(f"Please provide `axis` as `int`, found {type(axis)}.")
     if dim:
-        if not isinstance(dim, str):
-            raise ValueError(f"Please provide `dim` as `str`, found {type(dim)}.")
+        if not isinstance(dim, str) and not isinstance(dim, list):
+            raise ValueError(
+                f"Please provide `dim` as `str` or `list`, found {type(dim)}."
+            )
     if "mask" in kwargs:
         raise ValueError(
             "`xbitinfo` does not wrap the mask argument. Mask your xr.Dataset with NaNs instead."
@@ -141,7 +143,7 @@ def get_bitinformation(
     ----------
     ds : :py:class:`xarray.Dataset`
       Input dataset to analyse
-    dim : str
+    dim : str or list
       Dimension over which to apply mean. Only one of the ``dim`` and ``axis`` arguments can be supplied.
       If no ``dim`` or ``axis`` is given (default), the bitinformation is retrieved along all dimensions.
     axis : int
